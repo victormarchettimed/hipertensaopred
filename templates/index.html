@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predição de Pressão Alta</title>
+    <!-- Tailwind CSS via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="container mx-auto p-8 max-w-lg">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h1 class="text-3xl font-bold mb-8 text-center text-blue-600">Predição de Pressão Alta</h1>
+            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
+                <p class="text-sm text-gray-600 mb-4">
+                    Este modelo foi desenvolvido exclusivamente para fins acadêmicos, com o propósito de ser apresentado no Congresso da Sociedade Brasileira de Cardiologia do Espírito Santo. O modelo não deve ser utilizado em prática clínica, uma vez que não foi validado em ensaios clínicos randomizados.
+                </p>
+                <p class="text-sm text-gray-600 mb-4">
+                    O desenvolvimento do modelo contou com a contribuição dos seguintes autores: Victor Hugo Ovani Marchetti¹, Wellem da Penha Cimero², Luiz Fernando Reinoso³ e Bruno Spalenza Da Silva².
+                </p>
+                <p class="text-sm text-gray-600 mb-4">
+                    ¹ Programação e análise estatística.
+                </p>
+                <p class="text-sm text-gray-600 mb-4">
+                    ² Elaboração do conteúdo teórico.
+                </p>
+                <p class="text-sm text-gray-600 mb-4">
+                    ³ Revisão da programação.
+                </p>
+                <p class="text-sm text-gray-600">
+                    ⁴ Revisão teórica e estatística.
+                </p>
+                <p class="text-sm text-gray-600">
+                    Os autores estão vinculados ao Centro Universitário do Espírito Santo¹²⁴ e ao Instituto Federal do Espírito Santo, Campus Santa Teresa³.
+                </p>
+            </div>
+            <form id="prediction-form">
+                <!-- Campos do formulário -->
+                <div class="mb-4">
+                    <label for="idade_anos" class="block text-gray-700 font-bold mb-2">Idade (anos):</label>
+                    <input type="number" name="idade_anos" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div class="mb-4">
+                    <label for="sexo" class="block text-gray-700 font-bold mb-2">Sexo:</label>
+                    <select name="sexo" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="masculino">Masculino</option>
+                        <option value="feminino">Feminino</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="estado_conjugal_atual" class="block text-gray-700 font-bold mb-2">Estado Conjugal:</label>
+                    <select name="estado_conjugal_atual" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="solteiro">Solteiro</option>
+                        <option value="casado legalmente">Casado Legalmente</option>
+                        <option value="tem união estável há mais de seis meses">União Estável</option>
+                        <option value="viúvo">Viúvo</option>
+                        <option value="separado ou divorciado">Separado ou Divorciado</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="anos_de_estudo" class="block text-gray-700 font-bold mb-2">Anos de Estudo:</label>
+                    <input type="number" name="anos_de_estudo" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <p class="text-xs text-gray-500 mt-2">
+                        Ensino fundamental completo: 8 a 10 anos<br>
+                        Ensino médio completo: 11 a 14 anos<br>
+                        Ensino superior completo: 14 a 20 anos
+                    </p>
+                </div>
+                <div class="mb-4">
+                    <label for="dirige" class="block text-gray-700 font-bold mb-2">Dirige:</label>
+                    <div class="flex items-center">
+                        <input type="radio" name="dirige" value="1" class="mr-2"> <span class="mr-4">Sim</span>
+                        <input type="radio" name="dirige" value="0" class="mr-2"> <span>Não</span>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="freq_horta_crua" class="block text-gray-700 font-bold mb-2">Frequência de Consumo de Hortaliças:</label>
+                    <select name="freq_horta_crua" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="6">Todos os dias (inclusive sábado e domingo)</option>
+                        <option value="5">5 a 6 dias por semana</option>
+                        <option value="4">3 a 4 dias por semana</option>
+                        <option value="3">1 a 2 dias por semana</option>
+                        <option value="1">Quase nunca</option>
+                        <option value="2">Nunca</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="bebida_alcoolica" class="block text-gray-700 font-bold mb-2">Consome Bebida Alcoólica:</label>
+                    <div class="flex items-center">
+                        <input type="radio" name="bebida_alcoolica" value="1" class="mr-2"> <span class="mr-4">Sim</span>
+                        <input type="radio" name="bebida_alcoolica" value="0" class="mr-2"> <span>Não</span>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="exercicio_fisico" class="block text-gray-700 font-bold mb-2">Pratica Exercício Físico:</label>
+                    <div class="flex items-center">
+                        <input type="radio" name="exercicio_fisico" value="1" class="mr-2"> <span class="mr-4">Sim</span>
+                        <input type="radio" name="exercicio_fisico" value="0" class="mr-2"> <span>Não</span>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="fumante" class="block text-gray-700 font-bold mb-2">É Fumante:</label>
+                    <div class="flex items-center">
+                        <input type="radio" name="fumante" value="1" class="mr-2"> <span class="mr-4">Sim</span>
+                        <input type="radio" name="fumante" value="0" class="mr-2"> <span>Não</span>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="peso_kg" class="block text-gray-700 font-bold mb-2">Peso (kg):</label>
+                    <input type="number" id="peso_kg" name="peso_kg" step="0.01" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div class="mb-4">
+                    <label for="altura_cm" class="block text-gray-700 font-bold mb-2">Altura (cm):</label>
+                    <input type="number" id="altura_cm" name="altura_cm" step="0.01" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div class="mb-4">
+                    <label for="imc" class="block text-gray-700 font-bold mb-2">IMC:</label>
+                    <input type="number" id="imc" name="imc" readonly class="bg-gray-200 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div class="mb-4">
+                    <label for="cor" class="block text-gray-700 font-bold mb-2">Cor da Pele:</label>
+                    <select name="cor" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="branca">Branca</option>
+                        <option value="preta">Preta</option>
+                        <option value="amarela">Amarela</option>
+                        <option value="parda">Parda</option>
+                        <option value="indígena">Indígena</option>
+                    </select>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Predizer
+                    </button>
+                </div>
+            </form>
+            <div id="result" class="mt-8 text-center"></div>
+            <canvas id="gauge-chart" class="mt-8 mx-auto" width="300" height="150"></canvas>
+            <div id="recommendation" class="mt-4 text-center text-red-500 font-bold"></div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Função para calcular IMC
+            function calcularIMC() {
+                const peso = parseFloat($("#peso_kg").val());
+                const altura = parseFloat($("#altura_cm").val()) / 100; // Converter altura para metros
+                if (peso && altura) {
+                    const imc = (peso / (altura * altura)).toFixed(2);
+                    $("#imc").val(imc);
+                }
+            }
+
+            // Calcular IMC quando os valores de peso ou altura mudarem
+            $("#peso_kg, #altura_cm").on("input", function() {
+                calcularIMC();
+            });
+
+            // Submissão do formulário via AJAX
+            $("#prediction-form").on("submit", function(event) {
+                event.preventDefault();
+
+                // Serializar os dados do formulário
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    url: "/predict",
+                    method: "POST",
+                    data: formData,
+                    success: function(data) {
+                        // Exibir os resultados
+                        $("#result").html("Probabilidade de Pressão Alta: " + (data.probability * 100).toFixed(2) + "%<br>Probabilidade de Não Ter Pressão Alta: " + ((1 - data.probability) * 100).toFixed(2) + "%");
+
+                        // Atualizar o gráfico de pizza
+                        updateGauge(data.probability);
+
+                        // Mostrar recomendação adicional se a probabilidade de pressão alta for superior a 50%
+                        if (data.probability > 0.5) {
+                            $("#recommendation").text("Recomendamos investigação adicional dessa pressão alta.");
+                        } else {
+                            $("#recommendation").text(""); // Limpar mensagem anterior
+                        }
+                    }
+                });
+            });
+        });
+
+        // Função para atualizar o gráfico de pizza
+        function updateGauge(probability) {
+            const ctx = document.getElementById("gauge-chart").getContext("2d");
+            const gaugeData = {
+                labels: ["Pressão Alta", "Sem Pressão Alta"],
+                datasets: [{
+                    data: [probability * 100, (1 - probability) * 100],
+                    backgroundColor: ["#ff6384", "#36a2eb"],
+                    hoverBackgroundColor: ["#ff6384", "#36a2eb"]
+                }]
+            };
+
+            const options = {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ": " + tooltipItem.raw.toFixed(2) + "%";
+                            }
+                        }
+                    }
+                }
+            };
+
+            new Chart(ctx, {
+                type: "doughnut",
+                data: gaugeData,
+                options: options
+            });
+        }
+    </script>
+</body>
+</html>
